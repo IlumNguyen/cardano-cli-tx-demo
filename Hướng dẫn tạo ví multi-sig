@@ -43,9 +43,9 @@ Lưu lại file này dưới dạng `multisig-script.json`.
 Sử dụng script đã tạo để tạo địa chỉ ví multisig.
 
 ```bash
-cardano-cli address build-script \
-    --script-file multisig-script.json \
-    --mainnet \
+cardano-cli address build \
+    --payment-script-file multisig-script.json \
+    --testnet-magic 1 \
     --out-file multisig.addr
 ```
 
