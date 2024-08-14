@@ -1,0 +1,106 @@
+Để tạo một ví multisig trên blockchain Cardano bằng cách sử dụng Cardano CLI, bạn có thể làm theo các bước sau:
+
+### Bước 1: Tạo các khóa (signing keys)
+Bạn cần tạo khóa (signing keys) cho từng thành viên tham gia ví multisig.
+
+```bash
+cardano-cli address key-gen \
+    --verification-key-file payment1.vkey \
+    --signing-key-file payment1.skey
+```
+
+Thực hiện lệnh này cho mỗi thành viên trong ví multisig, thay `payment1` bằng `payment2`, `payment3`,...
+
+### Bước 2: Tạo script cho ví multisig
+Sau khi có các khóa, bạn cần tạo một script mô tả điều kiện multisig.
+
+Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu 2 trong số 3 thành viên ký, bạn có thể tạo một file JSON như sau:
+
+```json
+{
+  "type": "all",
+  "scripts":
+  [
+    {
+      "type": "sig",
+      "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment1.vkey)"
+    },
+    {
+      "type": "sig",
+      "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment2.vkey)"
+    },
+    {
+      "type": "sig",
+      "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment3.vkey)"
+    }
+  ]
+}
+```
+
+Lưu lại file này dưới dạng `multisig-script.json`.
+
+### Bước 3: Tạo địa chỉ ví multisig
+Sử dụng script đã tạo để tạo địa chỉ ví multisig.
+
+```bash
+cardano-cli address build-script \
+    --script-file multisig-script.json \
+    --mainnet \
+    --out-file multisig.addr
+```
+
+Lệnh này sẽ tạo ra file `multisig.addr` chứa địa chỉ ví multisig.
+
+### Bước 4: Gửi ADA vào địa chỉ multisig
+Bạn có thể gửi ADA vào địa chỉ multisig này bằng cách sử dụng địa chỉ từ file `multisig.addr`.
+
+### Bước 5: Tạo giao dịch sử dụng ví multisig
+Để thực hiện một giao dịch từ ví multisig, bạn cần thực hiện các bước sau:
+
+1. **Xây dựng giao dịch**: Tạo một transaction raw mà không ký.
+
+```bash
+cardano-cli transaction build-raw \
+    --tx-in <TX_HASH>#<TX_IX> \
+    --tx-out <RECEIVER_ADDR>+<AMOUNT> \
+    --fee <FEE> \
+    --out-file tx.raw \
+    --withdrawal <WITHDRAWAL> \
+    --invalid-hereafter <SLOT_NUMBER> \
+    --invalid-before <SLOT_NUMBER> \
+    --script-file multisig-script.json
+```
+
+2. **Tính phí giao dịch**: Sử dụng transaction raw để tính phí.
+
+```bash
+cardano-cli transaction calculate-min-fee \
+    --tx-body-file tx.raw \
+    --tx-in-count <TX-IN-COUNT> \
+    --tx-out-count <TX-OUT-COUNT> \
+    --witness-count <NUMBER_OF_WITNESSES> \
+    --mainnet \
+    --protocol-params-file protocol.json
+```
+
+3. **Ký giao dịch**: Các thành viên sẽ ký giao dịch.
+
+```bash
+cardano-cli transaction sign \
+    --tx-body-file tx.raw \
+    --signing-key-file payment1.skey \
+    --signing-key-file payment2.skey \
+    --signing-key-file payment3.skey \
+    --script-file multisig-script.json \
+    --out-file tx.signed
+```
+
+4. **Gửi giao dịch**: Sau khi ký, gửi giao dịch lên mạng.
+
+```bash
+cardano-cli transaction submit \
+    --tx-file tx.signed \
+    --mainnet
+```
+
+End.
