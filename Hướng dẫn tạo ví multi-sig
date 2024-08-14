@@ -28,6 +28,7 @@ Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu 2 trong số 3 
           "type": "sig",
           "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment1.vkey)"
         },
+        {
           "type": "sig",
           "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment2.vkey)"
         },
@@ -39,6 +40,7 @@ Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu 2 trong số 3 
     }
   ]
 }
+
 
 ```
 
