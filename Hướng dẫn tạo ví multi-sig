@@ -19,22 +19,27 @@ Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu 2 trong số 3 
 ```json
 {
   "type": "all",
-  "scripts":
-  [
+  "scripts": [
     {
-      "type": "sig",
-      "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment1.vkey)"
-    },
-    {
-      "type": "sig",
-      "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment2.vkey)"
-    },
-    {
-      "type": "sig",
-      "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment3.vkey)"
+      "type": "atLeast",
+      "required": 2,
+      "scripts": [
+        {
+          "type": "sig",
+          "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment1.vkey)"
+        },
+          "type": "sig",
+          "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment2.vkey)"
+        },
+        {
+          "type": "sig",
+          "keyHash": "$(cardano-cli address key-hash --payment-verification-key-file payment3.vkey)"
+        }
+      ]
     }
   ]
 }
+
 ```
 
 Lưu lại file này dưới dạng `multisig-script.json`.
