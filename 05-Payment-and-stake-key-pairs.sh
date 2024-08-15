@@ -1,3 +1,11 @@
+#!/bin/bash
+
+if [[ ! $# -gt 0 ]]; then
+  echo "Missing wallet name as argument" && exit 1
+fi
+
+keyName=$1
+
 cardano-address recovery-phrase generate > recoveryphrase.txt
 
 cat recoveryphrase.txt | cardano-address key from-recovery-phrase Shelley > root.prv
