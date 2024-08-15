@@ -22,11 +22,11 @@ cardano-cli key convert-cardano-address-key \
 --signing-key-file stake.prv \
 --out-file stake.skey
 
-cardano-cli address build --testnet-magic 2 \
+cardano-cli address build --testnet-magic 1 \
 --payment-verification-key $(cat payment-0.pub) \
 --stake-verification-key $(cat stake.pub) \
 --out-file payment-0.address
 
-cardano-cli stake-address build --testnet-magic 2 \
+cardano-cli stake-address build --testnet-magic 1 \
 --stake-verification-key-file stake.pub \
 --out-file stake.address
