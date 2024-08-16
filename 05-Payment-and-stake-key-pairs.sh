@@ -1,4 +1,4 @@
-#chmod +x 05-Payment-and-stake-key-pairs.sh
+#chmod +x 05-payment-and-stake-key-pairs.sh
 
 cardano-address recovery-phrase generate > recoveryphrase.txt
 
