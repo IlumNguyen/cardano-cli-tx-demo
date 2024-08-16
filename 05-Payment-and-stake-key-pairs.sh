@@ -1,3 +1,5 @@
+#chmod +x 05-Payment-and-stake-key-pairs.sh
+
 cardano-address recovery-phrase generate > recoveryphrase.txt
 
 cat recoveryphrase.txt | cardano-address key from-recovery-phrase Shelley > root.prv
