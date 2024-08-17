@@ -74,3 +74,6 @@ cardano-cli transaction sign  \
 cardano-cli transaction submit \
     --tx-file txmintsigned \
     --testnet-magic 1
+    -- out-file txsubmit
+
+cardano-cli transaction txid --tx-file txsubmit
