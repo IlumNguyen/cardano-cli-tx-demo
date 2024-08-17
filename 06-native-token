@@ -1,0 +1,50 @@
+echo "{" > policy.script 
+echo "  \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file policy0.vkey)\"," >> policy.script 
+echo "  \"type\": \"sig\"" >> policy.script 
+echo "}" >> policy.script
+
+cardano-cli transaction policyid --script-file policy.script > policyID
+
+echo "tokenname1=$(echo -n "Vcoincheck" | xxd -ps | tr -d '\n')" > tokenname
+echo "tokenamount= "1000000"" >> tokenname
+echo "output= "0"" >> tokenname
+
+cardano-cli query utxo \
+    --address addr_test1qpul5qu0f0c553dltsqh6jqe3dt2d5atwhupzsjnqhexv6rkv524fsugfz5magysjzdsfj2ae2xnrs6y98xu0ljg3hksmwuw2q \
+    --testnet-magic 1 \
+    --out-file payment-0-address-balance
+
+cardano-cli transaction build-raw \
+    --fee 0\
+    --tx-in 606ffacfa1f721c5d104e79b144a30949a69d74b6c48191a48f41e164e57e47c#0 \
+    --tx-out addr_test1qpul5qu0f0c553dltsqh6jqe3dt2d5atwhupzsjnqhexv6rkv524fsugfz5magysjzdsfj2ae2xnrs6y98xu0ljg3hksmwuw2q+10820419+"1000000 a5381de7172c534a5722c2c25ce4e56f7a1a8a65569a30341a58024b.56636f696e636865636b" \
+    --mint "1000000 a5381de7172c534a5722c2c25ce4e56f7a1a8a65569a30341a58024b.56636f696e636865636b" \
+    --minting-script-file policy.script \
+    --out-file txmintraw
+
+cardano-cli transaction calculate-min-fee \
+      --testnet-magic 1 \
+      --tx-body-file txmintraw \
+      --tx-in-count 1 \
+      --tx-out-count 1 \
+      --witness-count 2 \
+      --protocol-params-file protocol.json  
+
+cardano-cli transaction build-raw \
+    --fee 179581\
+    --tx-in 606ffacfa1f721c5d104e79b144a30949a69d74b6c48191a48f41e164e57e47c#0 \
+    --tx-out addr_test1qpul5qu0f0c553dltsqh6jqe3dt2d5atwhupzsjnqhexv6rkv524fsugfz5magysjzdsfj2ae2xnrs6y98xu0ljg3hksmwuw2q+10820419+"1000000 a5381de7172c534a5722c2c25ce4e56f7a1a8a65569a30341a58024b.56636f696e636865636b" \
+    --mint "1000000 a5381de7172c534a5722c2c25ce4e56f7a1a8a65569a30341a58024b.56636f696e636865636b" \
+    --minting-script-file policy.script \
+    --out-file txmintraw      
+
+cardano-cli transaction sign  \
+    --signing-key-file payment-0.skey  \
+    --signing-key-file policy0.skey  \
+    --testnet-magic 1 \
+    --tx-body-file txmintraw  \
+    --out-file txmintsigned
+
+    cardano-cli transaction submit \
+        --tx-file txmintsigned \
+        --testnet-magic 1
