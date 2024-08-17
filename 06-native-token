@@ -1,7 +1,7 @@
-echo "{" > policy.script 
-echo "  \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file policy.vkey)\"," >> policy.script 
-echo "  \"type\": \"sig\"" >> policy.script 
-echo "}" >> policy.script
+echo "{" > policy/policy.script 
+echo "  \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file policy/policy.vkey)\"," >> policy/policy.script 
+echo "  \"type\": \"sig\"" >> policy/policy.script 
+echo "}" >> policy/policy.script
 
 cardano-cli transaction policyid --script-file policy.script > policyID
 
