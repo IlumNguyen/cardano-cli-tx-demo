@@ -1,5 +1,5 @@
 echo "{" > policy.script 
-echo "  \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file policy0.vkey)\"," >> policy.script 
+echo "  \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file policy.vkey)\"," >> policy.script 
 echo "  \"type\": \"sig\"" >> policy.script 
 echo "}" >> policy.script
 
