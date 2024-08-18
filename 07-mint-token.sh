@@ -10,7 +10,7 @@ tokenamount="10000000"
 output="0"
 
 ###Bước này cần tạo địa chỉ trước đó, có thể chạy script 05-payment-and-stake-key-pairs
-address=$(cat ../payment-0.address)
+address=$(cat ../payment-0.addr)
 ###Tạo địa chỉ thanh toán xong thì gửi vào đó một chút tADA để thực hiện mint token
 
 cardano-cli query protocol-parameters --testnet-magic 1 --out-file protocol.json
