@@ -1,0 +1,111 @@
+Để tạo một ví multisig trên blockchain Cardano bằng cách sử dụng Cardano CLI, bạn có thể làm theo các bước sau:
+
+### Bước 1: Tạo các khóa (signing keys)
+Bạn cần tạo khóa (signing keys) cho từng thành viên tham gia ví multisig.
+
+```bash
+cardano-cli address key-gen \
+    --verification-key-file payment1.vkey \
+    --signing-key-file payment1.skey
+```
+
+Thực hiện lệnh này cho mỗi thành viên trong ví multisig, thay `payment1` bằng `payment2`, `payment3`,...
+
+Sau đó tạo tiếp payment-verification-key-file
+
+cardano-cli address key-hash --payment-verification-key-file payment1.vkey
+cardano-cli address key-hash --payment-verification-key-file payment2.vkey
+
+
+### Bước 2: Tạo script cho ví multisig
+Sau khi có các khóa, bạn cần tạo một script mô tả điều kiện multisig.
+
+Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu tất cả 2 thành viên ký, bạn có thể tạo một file JSON như sau:
+
+```json
+{
+  "type": "all",
+  "scripts": [
+        {
+          "type": "sig",
+          "keyHash": "35b37671400467655dc3187d4fa89d0ea9eafdc1f8bbd5f3114ac151"
+        },
+        {
+          "type": "sig",
+          "keyHash": "f81cddbf1088619348ed4a7fcddfb53c6b9bf85427fe3461032d25ad"
+        }
+      ]
+    }
+
+```
+
+Lưu lại file này dưới dạng `multisigscript.json
+
+### Bước 3: Tạo địa chỉ ví multisig
+Sử dụng script đã tạo để tạo địa chỉ ví multisig.
+
+```bash
+cardano-cli address build \
+    --payment-script-file multisigscript.json \
+    --testnet-magic 1 \
+    --out-file multisig.addr
+```
+
+Lệnh này sẽ tạo ra file `multisig.addr` chứa địa chỉ ví multisig.
+
+### Bước 4: Gửi ADA vào địa chỉ multisig
+Bạn có thể gửi ADA vào địa chỉ multisig này bằng cách sử dụng địa chỉ từ file `multisig.addr`.
+
+### Bước 5: Tạo giao dịch sử dụng ví multisig
+Để thực hiện một giao dịch từ ví multisig, bạn cần thực hiện các bước sau:
+
+1. **Xây dựng giao dịch**: Tạo một transaction mà không ký, trong đó kèm theo chứng thực (Witness) của script Multisig.
+
+cardano-cli transaction build \
+    --tx-in 888042ed380b204910d003af6d29d2b9a4d66611f98fba37d2575ac5304e1152#0 \
+    --tx-out "addr_test1qzjygrmccjfefxrn4cu0vhmgfvj6zdzqvvpqa9jn358h7y9ygqvw5yc93lmrwfeu959acw45aa7xpuz35asq3r8k2ldqgfva42 10000000 lovelace" \
+    --change-address addr_test1wp4wrfpflh9m9gts8srq4u9vrd9axtw0udvszgwzkfcygpstf2t4l \
+    --testnet-magic 1 \
+    --out-file txraw \
+    --witness-override 2 \
+    --tx-in-script-file multisigscript.json
+
+2. **Tính phí giao dịch**: Sử dụng transaction raw để tính phí.
+
+```bash
+cardano-cli transaction calculate-min-fee \
+    --tx-body-file txraw \
+    --tx-in-count <TX-IN-COUNT> \
+    --tx-out-count <TX-OUT-COUNT> \
+    --witness-count <NUMBER_OF_WITNESSES> \
+    --mainnet \
+    --protocol-params-file protocol.json
+```
+
+3. **Xây dựng yêu cầu chứng thực**: construct required witnesses
+
+cardano-cli transaction witness \
+    --tx-body-file txraw \
+    --signing-key-file wallets/alice.skey \
+    --testnet-magic 1 \
+    --out-file key1witness
+  
+  cardano-cli transaction witness \
+    --tx-body-file txraw \
+    --signing-key-file wallets/bob.skey \
+    --testnet-magic 1 \
+    --out-file key2witness
+
+4. **Tập hợp và gửi giao dịch lên mạng lưới**:
+
+cardano-cli transaction assemble \
+    --tx-body-file txraw \
+    --witness-file key1witness \
+    --witness-file key2witness \
+    --out-file signedtx
+
+cardano-cli transaction submit \
+    --tx-file signedtx \
+    --testnet-magic 1
+
+End.
