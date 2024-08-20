@@ -4,12 +4,12 @@ address=$(cat payment-0.addr)
 echo "$(cardano-cli query utxo --address $address --testnet-magic 1)" > payment-0-balance
 
 ###Khai báo các biến sau để tạo NFT, thay thế tên cho phù hợp với nhu cầu
-realtokenname="Bored Ape Club"
+realtokenname="Thank you for everything"
 tokenname=$(echo -n $realtokenname | xxd -b -ps -c 80 | tr -d '\n')
 tokenamount="1"
 fee="0"
 output="0"
-ipfs_hash="QmWUPb9vGGU6wVVb4xcq2UWnbn1HtvR3XXnHGaqYgRwVCJ" 
+ipfs_hash="Qmert8ihVMwiTnTpEPNz6knFKXnJ4ttRVT7uwEmwKdSc5g" 
 cardano-cli query protocol-parameters --testnet-magic 1 --out-file protocol.json
 address=$(cat payment-0.addr)
 
@@ -18,27 +18,23 @@ cardano-cli address key-gen \
     --verification-key-file policy.vkey \
     --signing-key-file policy.skey
 
-###Khởi tạo Policy script
-    #Bước 1. Tạo folder chứa policy script trước
-touch policy.script
-    #Bước 2. Chạy code sau đây để dán nội dung vào folder policy.script mới vừa tạo
-echo "{" >> policy.script
-echo "  \"type\": \"all\"," >> policy.script
-echo "  \"scripts\":" >> policy.script
-echo "  [" >> policy.script
-echo "   {" >> policy.script
-echo "     \"type\": \"before\"," >> policy.script
-echo "     \"slot\": $(expr $(cardano-cli query tip --testnet-magic 1 | jq .slot?) + 10000)" >> policy.script
-echo "   }," >> policy.script
-echo "   {" >> policy.script
-echo "     \"type\": \"sig\"," >> policy.script
-echo "     \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file policy.vkey)\"" >> policy.script
-echo "   }" >> policy.script
-echo "  ]" >> policy.script
-echo "}" >> policy.script
-    #Bước 3. Copy toàn bộ nội dung trong folder policy.script rồi dán vào thư mục trong câu lệnh sau để tạo thành file .json
-echo "$(cat policy.script)" > policy.script.json
-    #Bước 4. Có file json rồi, tiến hành tạo policyid từ script
+###Khởi tạo Policy script, file JSON. Chạy đoạn code sau:
+echo "{" >> policy.script.json
+echo "  \"type\": \"all\"," >> policy.script.json
+echo "  \"scripts\":" >> policy.script.json
+echo "  [" >> policy.script.json
+echo "   {" >> policy.script.json
+echo "     \"type\": \"before\"," >> policy.script.json
+echo "     \"slot\": $(expr $(cardano-cli query tip --testnet-magic 1 | jq .slot?) + 10000)" >> policy.script.json
+echo "   }," >> policy.script.json
+echo "   {" >> policy.script.json
+echo "     \"type\": \"sig\"," >> policy.script.json
+echo "     \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file policy.vkey)\"" >> policy.script.json
+echo "   }" >> policy.script.json
+echo "  ]" >> policy.script.json
+echo "}" >> policy.script.json
+
+###Có file json rồi, tiến hành tạo policyid từ script
 cardano-cli transaction policyid --script-file ./policy.script.json > policyID
 
 ###Tiến hành tạo file JSON cho Metadata của NFT với thông tin mình mong muốn. Lưu ý chỉnh sửa lại thông tin của mình!
@@ -46,8 +42,8 @@ echo "{" >> metadata.json
 echo "  \"721\": {" >> metadata.json
 echo "    \"$(cat policyID)\": {" >> metadata.json
 echo "      \"$(echo $realtokenname)\": {" >> metadata.json
-echo "        \"description\": \"Đây là một NFT tạo ra nhằm mục đích test\"," >> metadata.json
-echo "        \"name\": \"Cardano Bored Ape Club\"," >> metadata.json
+echo "        \"description\": \"Thiệp chúc mừng sinh nhật từ bé vk\"," >> metadata.json
+echo "        \"name\": \"Thank you for everything\"," >> metadata.json
 echo "        \"id\": \"1\"," >> metadata.json
 echo "        \"image\": \"ipfs://$(echo $ipfs_hash)\"" >> metadata.json
 echo "      }" >> metadata.json
@@ -55,14 +51,16 @@ echo "    }" >> metadata.json
 echo "  }" >> metadata.json
 echo "}" >> metadata.json
 
-###Tiếp tục gán biến để chuẩn bị cho các bước tiếp theo, txhash và txix điền như trong file payment-0-balance
+###Tiếp tục gán biến để chuẩn bị cho các bước tiếp theo, txhash và txix điền như trong file payment-0-balance###
+##### LƯU Ý: $output phải nhỏ hơn $fund ##############
+##### Slot number được lấy từ file policy.script #####
 script="policy.script.json"
-txhash="aedbefc62e2acbf9d2bbdbbb246cbf7878bfa012f844d907faba2e4166168193"
+txhash="dc5d6ef139570deef4b75484c8d5ffb18f6c250cb5a34e99d68d9febb028c636"
 txix="0"
-funds="5000000"
+funds="10000000"
 policyid=$(cat policyID)
-slotnumber="68454721"  #***Replace this with your slot number***
-output=3000000 #***output này sẽ còn chỉnh sửa lại sau khi tính được fee, $output phải nhỏ hơn $fund***
+slotnumber="68490869"
+output=1508195
 receive_address=addr_test1qp8zrwzlmz7f27k3a7syh48vnq69mgqrjd85q25mapnwhacxj7dczm2t5exhwe893s33ftwtektdasvvxsq59788ly8slg2nz2
 
 ###Build transaction, chuẩn bị cho bước tính toán fee chính xác
