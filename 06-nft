@@ -55,6 +55,36 @@ echo "    }" >> metadata.json
 echo "  }" >> metadata.json
 echo "}" >> metadata.json
 
-###Tiếp tục gán biến để chuẩn bị cho các bước tiếp theo
+###Tiếp tục gán biến để chuẩn bị cho các bước tiếp theo, txhash và txix điền như trong file payment-0-balance
 script="policy.script.json"
+txhash="aedbefc62e2acbf9d2bbdbbb246cbf7878bfa012f844d907faba2e4166168193"
+txix="0"
+funds="5000000"
+policyid=$(cat policyID)
+slotnumber="68454721"  #***Replace this with your slot number***
+output=3000000 #***output này sẽ còn chỉnh sửa lại sau khi tính được fee, $output phải nhỏ hơn $fund***
+receive_address=addr_test1qp8zrwzlmz7f27k3a7syh48vnq69mgqrjd85q25mapnwhacxj7dczm2t5exhwe893s33ftwtektdasvvxsq59788ly8slg2nz2
 
+###Build transaction, chuẩn bị cho bước tính toán fee chính xác
+cardano-cli transaction build \
+--testnet-magic 1 \
+--babbage-era \
+--tx-in $txhash#$txix \
+--tx-out $receive_address+$output+"$tokenamount $policyid.$tokenname" \
+--change-address $address \
+--mint="$tokenamount $policyid.$tokenname" \
+--minting-script-file $script \
+--metadata-json-file metadata.json  \
+--invalid-hereafter $slotnumber \
+--witness-override 2 \
+--out-file tx.raw
+
+###Ký Giao dịch
+cardano-cli transaction sign  \
+--signing-key-file payment-0.skey  \
+--signing-key-file policy.skey  \
+--mainnet --tx-body-file tx.raw  \
+--out-file tx.signed
+
+###Gửi giao dịch lên mạng lưới
+cardano-cli transaction submit --tx-file tx.signed --testnet-magic 1
