@@ -1,24 +1,40 @@
-Để tạo một ví multisig trên blockchain Cardano bằng cách sử dụng Cardano CLI, bạn có thể làm theo các bước sau:
+############### MULTISIG ||| CARDANO-CLI ###################
 
-### Bước 1: Tạo các khóa (signing keys)
-Bạn cần tạo khóa (signing keys) cho từng thành viên tham gia ví multisig.
+### Bước 1: Tạo các khóa (signing keys) cho từng thành viên tham gia ví multisig
 
-```bash
 cardano-cli address key-gen \
-    --verification-key-file payment1.vkey \
-    --signing-key-file payment1.skey
-```
+  --verification-key-file payment1.vkey \
+  --signing-key-file payment1.skey
 
-Thực hiện lệnh này cho mỗi thành viên trong ví multisig, thay `payment1` bằng `payment2`, `payment3`,...
-
-Sau đó tạo tiếp payment-verification-key-file
+### Thực hiện lệnh này cho mỗi thành viên trong ví multisig, thay `payment1` bằng `payment2`, `payment3`,...
+### Hoặc cách khác có thể chạy script 00-generate-keys-and-addr.sh để tạo khóa và ví
+### Sau đó tạo tiếp payment-verification-key-file
 
 cardano-cli address key-hash --payment-verification-key-file payment1.vkey
 cardano-cli address key-hash --payment-verification-key-file payment2.vkey
 
 
-### Bước 2: Tạo script cho ví multisig
-Sau khi có các khóa, bạn cần tạo một script mô tả điều kiện multisig.
+### Bước 2: Tạo script cho ví multisig, lưu lại file với định dạng đuôi .json. Script này mô tả điều kiện của multisig
+# ***Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu tất cả 2 thành viên ký, bạn có thể tạo một file JSON như sau:
+
+echo "{" >> multisigscript.json
+echo "  "type\": \"all\"," >> multisigscript.json
+echo "  \"scripts\":" >> multisigscript.json
+echo "  [" >> multisigscript.json
+echo "   {" >> multisigscript.json
+echo "     \"type\": \"sig\"," >> multisigscript.json
+echo "     \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file alice.vkey)\"" >> multisigscript.json
+echo "   }," >> multisigscript.json
+echo "   {" >> multisigscript.json
+echo "     \"type\": \"sig\"," >> multisigscript.json
+echo "     \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file bob.vkey)\"" >> multisigscript.json
+echo "   }," >> multisigscript.json
+echo "   {" >>multisigscript.json
+echo "     \"type\": \"sig\"," >> multisigscript.json
+echo "     \"keyHash\": \"$(cardano-cli address key-hash --payment-verification-key-file bob.vkey)\"" >> multisigscript.json
+echo "   }" >> multisigscript.json
+echo "  ]" >> multisigscript.json
+echo "}" >> multisigscript.json
 
 Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu tất cả 2 thành viên ký, bạn có thể tạo một file JSON như sau:
 
