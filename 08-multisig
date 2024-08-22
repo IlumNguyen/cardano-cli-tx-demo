@@ -38,7 +38,6 @@ echo "}" >> multisigscript.json
 
 Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu tất cả 2 thành viên ký, bạn có thể tạo một file JSON như sau:
 
-```json
 {
   "type": "all",
   "scripts": [
@@ -53,19 +52,16 @@ Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu tất cả 2 th
       ]
     }
 
-```
 
 Lưu lại file này dưới dạng `multisigscript.json
 
 ### Bước 3: Tạo địa chỉ ví multisig
 Sử dụng script đã tạo để tạo địa chỉ ví multisig.
 
-```bash
 cardano-cli address build \
     --payment-script-file multisigscript.json \
     --testnet-magic 1 \
     --out-file multisig.addr
-```
 
 Lệnh này sẽ tạo ra file `multisig.addr` chứa địa chỉ ví multisig.
 
@@ -88,7 +84,6 @@ cardano-cli transaction build \
 
 2. **Tính phí giao dịch**: Sử dụng transaction raw để tính phí.
 
-```bash
 cardano-cli transaction calculate-min-fee \
     --tx-body-file txraw \
     --tx-in-count <TX-IN-COUNT> \
@@ -96,7 +91,6 @@ cardano-cli transaction calculate-min-fee \
     --witness-count <NUMBER_OF_WITNESSES> \
     --mainnet \
     --protocol-params-file protocol.json
-```
 
 3. **Xây dựng yêu cầu chứng thực**: construct required witnesses
 
