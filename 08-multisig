@@ -56,8 +56,8 @@ echo "   }" >> multisigscript.json
 echo "  ]" >> multisigscript.json
 echo "}" >> multisigscript.json
 
-######## 2.3 Ví dụ: Nếu bạn muốn tạo một ví multisig, trước slot $slotnumber+100 thì key nào ký cũng được ######
-######## Nhưng sau $slotnumber+100 thì chỉ 1 key duy nhất được ký #########
+######## 2.3 Ví dụ: Nếu bạn muốn tạo một ví multisig, trước slot $slotnumber+600 thì key nào ký cũng được ######
+######## Nhưng sau $slotnumber+600 thì chỉ 1 key duy nhất được ký #########
 echo "{" > multisigscript.json
 echo "  \"type\": \"any\"," >> multisigscript.json
 echo "  \"scripts\":" >> multisigscript.json
@@ -72,7 +72,7 @@ echo "     \"scripts\":" >> multisigscript.json
 echo "     [" >> multisigscript.json
 echo "      {" >> multisigscript.json
 echo "        \"type\": \"before\"," >> multisigscript.json
-echo "        \"slot\": $(expr $(cardano-cli query tip --testnet-magic 1 | jq .slot?) + 100)" >> multisigscript.json
+echo "        \"slot\": $(expr $(cardano-cli query tip --testnet-magic 1 | jq .slot?) + 600)" >> multisigscript.json
 echo "      }," >> multisigscript.json
 echo "      {" >>multisigscript.json
 echo "        \"type\": \"sig\"," >> multisigscript.json
@@ -100,10 +100,10 @@ echo "$(cardano-cli query utxo --address $address --testnet-magic 1)" > multisig
 ### Bước 5: Tạo giao dịch sử dụng ví multisig
 ### Gán biến, cần mở file multisig-balance để điền đúng tham số $txhash $txix $funds
 script="multisigscript.json"
-txhash="c545b8feaf3b9dcb486aa344ec382da5dfda1d27f0be0c2aa9c9c86f3ef8f6ec"
-txix="1"
-funds="89829747"
-output=10000000
+txhash="e720268eab8c5c68e565af40037fec1de6e81f6911ad71e8eb2fa469ccb79697"
+txix="0"
+funds="10000000"
+output=8000000
 receive_address=addr_test1qp8zrwzlmz7f27k3a7syh48vnq69mgqrjd85q25mapnwhacxj7dczm2t5exhwe893s33ftwtektdasvvxsq59788ly8slg2nz2
 
 ####### 5.1 Xây dựng giao dịch**: Tạo một transaction mà không ký, trong đó kèm theo chứng thực (Witness) của script Multisig.
