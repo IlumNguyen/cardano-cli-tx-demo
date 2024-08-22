@@ -18,7 +18,7 @@ cardano-cli address key-hash --payment-verification-key-file payment2.vkey
 # ***Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu tất cả 2 thành viên ký, bạn có thể tạo một file JSON như sau:
 
 echo "{" >> multisigscript.json
-echo "  "type\": \"all\"," >> multisigscript.json
+echo "  \"type\": \"all\"," >> multisigscript.json
 echo "  \"scripts\":" >> multisigscript.json
 echo "  [" >> multisigscript.json
 echo "   {" >> multisigscript.json
