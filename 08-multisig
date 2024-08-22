@@ -16,7 +16,7 @@ cardano-cli address key-gen \
 ### Bước 2: Tạo script cho ví multisig, lưu lại file với định dạng đuôi .json. Script này mô tả điều kiện của multisig
 
 ######## 2.1 Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu tất cả 3 thành viên ký, bạn có thể tạo một file JSON như sau:
-echo "{" >> multisigscript.json
+echo "{" > multisigscript.json
 echo "  \"type\": \"all\"," >> multisigscript.json
 echo "  \"scripts\":" >> multisigscript.json
 echo "  [" >> multisigscript.json
@@ -36,7 +36,7 @@ echo "  ]" >> multisigscript.json
 echo "}" >> multisigscript.json
 
 ######## 2.2 Ví dụ: Nếu bạn muốn tạo một ví multisig yêu cầu 2 trên 3 thành viên ký, bạn có thể tạo một file JSON như sau:
-echo "{" >> multisigscript.json
+echo "{" > multisigscript.json
 echo "  \"type\": \"atLeast\"," >> multisigscript.json
 echo "  \"required\": "2"," >> multisigscript.json
 echo "  \"scripts\":" >> multisigscript.json
@@ -58,7 +58,7 @@ echo "}" >> multisigscript.json
 
 ######## 2.3 Ví dụ: Nếu bạn muốn tạo một ví multisig, trước slot $slotnumber+100 thì key nào ký cũng được ######
 ######## Nhưng sau $slotnumber+100 thì chỉ 1 key duy nhất được ký #########
-echo "{" >> multisigscript.json
+echo "{" > multisigscript.json
 echo "  \"type\": \"any\"," >> multisigscript.json
 echo "  \"scripts\":" >> multisigscript.json
 echo "  [" >> multisigscript.json
