@@ -92,14 +92,13 @@ cardano-cli address build \
     --out-file multisig.addr
 
 #-------------------------
-### Bước 4: Gửi ADA vào địa chỉ multisig
-###### Bạn có thể gửi ADA vào địa chỉ multisig này bằng cách sử dụng địa chỉ từ file `multisig.addr`.
+### Bước 4: Gửi ADA vào địa chỉ multisig, lấy địa chỉ ví thông qua file `multisig.addr`.
 address=$(cat multisig.addr)
 echo "$(cardano-cli query utxo --address $address --testnet-magic 1)" > multisig-balance
 
 #-------------------------
 ### Bước 5: Tạo giao dịch sử dụng ví multisig
-### Gán biến, cần mở file multisig-balance để điền đúng tham số $txhash $txin $funds
+### Gán biến, cần mở file multisig-balance để điền đúng tham số $txhash $txix $funds
 script="multisigscript.json"
 txhash="c545b8feaf3b9dcb486aa344ec382da5dfda1d27f0be0c2aa9c9c86f3ef8f6ec"
 txix="1"
