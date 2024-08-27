@@ -19,7 +19,7 @@ cardano-cli key verification-key \
 --verification-key-file payment-0.vkey
 
 cardano-address key child 1852H/1815H/0H/2/0 < root.prv > stake.prv
-cardano-address key public --without-chain-code < stake.prv > stake.pub
+cardano-address key public --without-chain-code < stake.prv > stake.vkey
 
 cardano-cli key convert-cardano-address-key \
 --shelley-stake-key \
@@ -28,9 +28,9 @@ cardano-cli key convert-cardano-address-key \
 
 cardano-cli address build --testnet-magic 1 \
 --payment-verification-key $(cat payment-0.pub) \
---stake-verification-key $(cat stake.pub) \
+--stake-verification-key $(cat stake.vkey) \
 --out-file payment-0.addr
 
 cardano-cli stake-address build --testnet-magic 1 \
---stake-verification-key-file stake.pub \
+--stake-verification-key-file stake.vkey \
 --out-file stake.address
