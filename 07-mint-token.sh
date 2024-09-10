@@ -31,7 +31,7 @@ echo "}" >> policy/policy.script
 ###Tạo policyID từ policy.script
 cardano-cli transaction policyid --script-file policy/policy.script > policy/policyID
 
-address=$(cat ../payment-0.address)
+address=$(cat payment-0.addr)
 cardano-cli query utxo --address $address --testnet-magic 1
 
 ###Điền các thông tin vừa truy vấn được vào các dòng sau:
