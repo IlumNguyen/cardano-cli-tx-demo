@@ -66,7 +66,7 @@ cardano-cli transaction build-raw \
 
 ###Ký giao dịch
 cardano-cli transaction sign  \
-    --signing-key-file ../payment-0.skey  \
+    --signing-key-file payment-0.skey  \
     --signing-key-file policy/policy.skey  \
     --testnet-magic 1 \
     --tx-body-file txmintraw  \
