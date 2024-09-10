@@ -10,7 +10,7 @@ tokenamount="10000000"
 output="0"
 
 ###Bước này cần tạo địa chỉ trước đó, có thể chạy script 05-payment-and-stake-key-pairs
-address=$(cat ../payment-0.addr)
+address=$(cat payment-0.addr)
 ###Tạo địa chỉ thanh toán xong thì gửi vào đó một chút tADA để thực hiện mint token
 
 cardano-cli query protocol-parameters --testnet-magic 1 --out-file protocol.json
@@ -35,47 +35,35 @@ address=$(cat payment-0.addr)
 cardano-cli query utxo --address $address --testnet-magic 1
 
 ###Điền các thông tin vừa truy vấn được vào các dòng sau:
-txhash="1cd8e407861756cd6f58b92321ae75ac206460d78a327db5e8f1e26f529bebb0"
+txhash="e1775334044df61c550cdbc44293c588cc27b10a97eed749ec81768ba7dc83a6"
 txix="0"
 funds="100000000"
-policyid=$(cat policy/policyID) 
+policyid=$(cat policy/policyID)
+output=2000000
+receive_address=addr_test1qp8zrwzlmz7f27k3a7syh48vnq69mgqrjd85q25mapnwhacxj7dczm2t5exhwe893s33ftwtektdasvvxsq59788ly8slg2nz2
+script="policy/policy.script"
 
-###Xây dựng transaction ban đầu để tính toán fee hợp lý
-cardano-cli transaction build-raw \
-    --fee 0\
-    --tx-in $txhash#$txix \
-    --tx-out $address+$output+"$tokenamount $policyid.$tokenname" \
-    --mint "$tokenamount $policyid.$tokenname" \
-    --minting-script-file policy/policy.script \
-    --out-file txmintraw
+###Build transaction, chuẩn bị cho bước tính toán fee chính xác
+cardano-cli conway transaction build \
+--testnet-magic 1 \
+--tx-in $txhash#$txix \
+--tx-out $receive_address+$output+"$tokenamount $policyid.$tokenname" \
+--change-address $address \
+--mint="$tokenamount $policyid.$tokenname" \
+--minting-script-file $script \
+--metadata-json-file metadata.json  \
+--witness-override 2 \
+--out-file tx.raw
 
-fee=$(cardano-cli transaction calculate-min-fee --tx-body-file txmintraw --tx-in-count 1 --tx-out-count 1 --witness-count 2 --testnet-magic 1 --protocol-params-file protocol.json | cut -d " " -f1)
-echo "fee= $fee"
-
-output=$(expr $funds - $fee)
-echo "output= $output"
-
-###Xây dựng lại transaction sau khi đã biết chính xác fee và số tiền chuyển ra
-cardano-cli transaction build-raw \
-    --fee $fee  \
-    --tx-in $txhash#$txix  \
-    --tx-out $address+$output+"$tokenamount $policyid.$tokenname" \
-    --mint "$tokenamount $policyid.$tokenname" \
-    --minting-script-file policy/policy.script \
-    --out-file txmintraw      
-
-###Ký giao dịch
+###Ký Giao dịch
 cardano-cli transaction sign  \
-    --signing-key-file payment-0.skey  \
-    --signing-key-file policy/policy.skey  \
-    --testnet-magic 1 \
-    --tx-body-file txmintraw  \
-    --out-file txmintsigned
+--signing-key-file payment-0.skey  \
+--signing-key-file policy/policy.skey  \
+--mainnet --tx-body-file tx.raw  \
+--out-file tx.signed
 
 ###Gửi giao dịch lên mạng lưới
-cardano-cli transaction submit \
-    --tx-file txmintsigned \
-    --testnet-magic 1
+cardano-cli transaction submit --tx-file tx.signed --testnet-magic 1
 
 ### Lấy transaction ID
-cardano-cli transaction txid --tx-file txmintsigned
+cardano-cli transaction txid --tx-file tx.signed
