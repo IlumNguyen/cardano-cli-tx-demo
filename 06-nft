@@ -64,9 +64,8 @@ output=1508195
 receive_address=addr_test1qp8zrwzlmz7f27k3a7syh48vnq69mgqrjd85q25mapnwhacxj7dczm2t5exhwe893s33ftwtektdasvvxsq59788ly8slg2nz2
 
 ###Build transaction, chuẩn bị cho bước tính toán fee chính xác
-cardano-cli transaction build \
+cardano-cli conway transaction build \
 --testnet-magic 1 \
---babbage-era \
 --tx-in $txhash#$txix \
 --tx-out $receive_address+$output+"$tokenamount $policyid.$tokenname" \
 --change-address $address \
