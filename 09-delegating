@@ -2,16 +2,16 @@
 
 ### Bước 1: Cần đăng ký "stake key" của mình trên blockchain 
 ### việc đăng ký sẽ yêu cầu đặt cọc 2 ADA theo như tham số đã cài đặt trên mạng lưới ###
-cardano-cli stake-address registration-certificate \
---stake-verification-key-file stake.vkey \
---out-file registration.cert
+cardano-cli conway stake-address registration-certificate \
+  --stake-verification-key-file stake.vkey \
+  --key-reg-deposit-amt 2000000 \
+  --out-file registration.cert
 
 ### Bước 2: Xây dựng chứng chỉ đăng ký, giao dịch này yêu cầu được ký bởi payment.skey và stake.skey
-cardano-cli transaction build 
---babbage-era \
+cardano-cli conway transaction build \
 --testnet-magic 1 \
 --witness-override 2 \
---tx-in $(cardano-cli query utxo --address $(cat payment-0.addr) --testnet-magic 1 --out-file  /dev/stdout | jq -r 'keys[1]') \
+--tx-in $(cardano-cli query utxo --address $(cat payment-0.addr) --testnet-magic 1 --out-file /dev/stdout | jq -r 'keys[]' | head -n 1) \
 --change-address $(cat payment-0.addr) \
 --certificate-file registration.cert \
 --out-file tx.raw
