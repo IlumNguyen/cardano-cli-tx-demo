@@ -15,3 +15,23 @@ cardano-cli conway transaction build \
 --change-address $(cat payment-0.addr) \
 --certificate-file registration.cert \
 --out-file tx.raw
+
+###Ký giao dịch ủy thác bằng cả 2 key
+cardano-cli transaction sign \
+--tx-body-file tx.raw \
+--signing-key-file payment-0.skey \
+--signing-key-file stake.skey \
+--testnet-magic 1 \
+--out-file tx.signed
+
+cardano-cli transaction submit \
+--testnet-magic 1 \
+--tx-file tx.signed 
+
+----
+cardano-cli conway stake-address registration-certificate \
+--stake-verification-key-file stake.vkey \
+--stake-pool-id baba8f13322b33c1ebc2bf1e805bd8ee5300657ff2c0f0749bc892e2 \
+--out-file delegation.cert
+
+cardano-cli conway stake-address stake-delegation-certificate
