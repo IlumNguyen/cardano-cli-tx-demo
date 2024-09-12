@@ -1,13 +1,20 @@
-### ĐĂNG KÝ ỦY THÁC VÀO POOL ###
+##################################################################
+#################### ĐĂNG KÝ ỦY THÁC VÀO POOL ####################
+##################################################################
 
-### Bước 1: Cần đăng ký "stake key" của mình trên blockchain 
+Pool_id=""
+
+### GỒM 2 BƯỚC: ĐĂNG KÝ CHỨNG CHỈ ỦY THÁC VÀ ĐĂNG KÝ POOL ỦY THÁC THEO STAKE ADDRESS ###
+
+### BƯỚC 1: ĐĂNG KÝ CHỨNG CHỈ ỦY THÁC
+### 1.1: Cần đăng ký "stake key" của mình trên blockchain 
 ### việc đăng ký sẽ yêu cầu đặt cọc 2 ADA theo như tham số đã cài đặt trên mạng lưới ###
 cardano-cli conway stake-address registration-certificate \
   --stake-verification-key-file stake.vkey \
   --key-reg-deposit-amt 2000000 \
   --out-file registration.cert
 
-### Bước 2: Xây dựng chứng chỉ đăng ký, giao dịch này yêu cầu được ký bởi payment.skey và stake.skey
+### 1.2: Xây dựng chứng chỉ đăng ký, giao dịch này sẽ được yêu cầu ký bởi payment.skey và stake.skey
 cardano-cli conway transaction build \
 --testnet-magic 1 \
 --witness-override 2 \
@@ -16,7 +23,7 @@ cardano-cli conway transaction build \
 --certificate-file registration.cert \
 --out-file tx.raw
 
-###Ký giao dịch ủy thác bằng cả 2 key
+### 1.3: Ký giao dịch ủy thác bằng cả 2 key. Sau đó submit giao dịch lên on-chain
 cardano-cli transaction sign \
 --tx-body-file tx.raw \
 --signing-key-file payment-0.skey \
@@ -28,10 +35,31 @@ cardano-cli transaction submit \
 --testnet-magic 1 \
 --tx-file tx.signed 
 
-----
-cardano-cli conway stake-address registration-certificate \
---stake-verification-key-file stake.vkey \
---stake-pool-id baba8f13322b33c1ebc2bf1e805bd8ee5300657ff2c0f0749bc892e2 \
---out-file delegation.cert
 
-cardano-cli conway stake-address stake-delegation-certificate
+### BƯỚC 2: ĐĂNG KÝ POOL ỦY THÁC THEO STAKE ADDRESS
+### 2.1: Cần đăng ký pool ủy thác theo pool ID 
+cardano-cli conway stake-address stake-delegation-certificate \
+--stake-verification-key-file stake.vkey \
+--stake-pool-id $Pool_id \
+--out-file delegate.cert
+
+### 2.2: Xây dựng chứng chỉ đăng ký, giao dịch này sẽ được yêu cầu ký bởi payment.skey và stake.skey
+cardano-cli conway transaction build \
+--testnet-magic 1 \
+--witness-override 2 \
+--tx-in $(cardano-cli query utxo --address $(cat payment-0.addr) --testnet-magic 1 --out-file /dev/stdout | jq -r 'keys[]' | head -n 1) \
+--change-address $(cat payment-0.addr) \
+--certificate-file delegate.cert \
+--out-file txraw
+
+### 2.3: Ký giao dịch ủy thác bằng cả 2 key. Sau đó submit giao dịch lên on-chain
+cardano-cli transaction sign \
+--tx-body-file txraw \
+--signing-key-file payment-0.skey \
+--signing-key-file stake.skey \
+--testnet-magic 1 \
+--out-file txsigned
+
+cardano-cli transaction submit \
+--testnet-magic 1 \
+--tx-file txsigned
