@@ -51,7 +51,6 @@ cardano-cli conway transaction build \
 --change-address $address \
 --mint="$tokenamount $policyid.$tokenname" \
 --minting-script-file $script \
---metadata-json-file metadata.json  \
 --witness-override 2 \
 --out-file tx.raw
 
