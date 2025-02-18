@@ -31,6 +31,6 @@ cardano-cli address build --testnet-magic 1 \
 --stake-verification-key $(cat stake.vkey) \
 --out-file payment-0.addr
 
-cardano-cli stake-address build --testnet-magic 1 \
+cardano-cli conway stake-address build --testnet-magic 1 \
 --stake-verification-key-file stake.vkey \
 --out-file stake.address
