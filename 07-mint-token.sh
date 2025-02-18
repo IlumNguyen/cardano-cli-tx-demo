@@ -29,7 +29,7 @@ echo "  \"type\": \"sig\"" >> policy/policy.script
 echo "}" >> policy/policy.script
 
 ###Tạo policyID từ policy.script
-cardano-cli transaction policyid --script-file policy/policy.script > policy/policyID
+cardano-cli conway transaction policyid --script-file policy/policy.script > policy/policyID
 
 address=$(cat payment-0.addr)
 cardano-cli query utxo --address $address --testnet-magic 1
@@ -56,14 +56,14 @@ cardano-cli conway transaction build \
 --out-file tx.raw
 
 ###Ký Giao dịch
-cardano-cli transaction sign  \
+cardano-cli conway transaction sign  \
 --signing-key-file payment-0.skey  \
 --signing-key-file policy/policy.skey  \
 --mainnet --tx-body-file tx.raw  \
 --out-file tx.signed
 
 ###Gửi giao dịch lên mạng lưới
-cardano-cli transaction submit --tx-file tx.signed --testnet-magic 1
+cardano-cli conway transaction submit --tx-file tx.signed --testnet-magic 1
 
 ### Lấy transaction ID
-cardano-cli transaction txid --tx-file tx.signed
+cardano-cli conway transaction txid --tx-file tx.signed
